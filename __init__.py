@@ -54,7 +54,7 @@ class MainWindowExtension(WindowExtension):
     uimanager_xml = '''
         <ui>
             <menubar name='menubar'>
-                <menu action='tools_menu'>
+                <menu action='insert_menu'>
                     <placeholder name='plugin_items'>
                         <menuitem action='mantis_button_clicked'/>
                     </placeholder>
@@ -70,7 +70,7 @@ class MainWindowExtension(WindowExtension):
         plugin.bt = Mantis()
 
     @action(
-            _('Insert Mantis Link'),
+            _('Mantis Link'),
             readonly=True,
             accelerator='<Control><Shift>M'
     )  # T: menu item
