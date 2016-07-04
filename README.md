@@ -3,7 +3,7 @@ zim-plugin-simplemantislink
 
 Super-easy way to entry a clickable link with title to mantis ticket in the Zim wiki's with the short cut.
 
-When **<Ctrl><Shift>M** is clicked, the following happens:
+When `<Ctrl> + <Shift> + M` is clicked, the following happens:
 
 * You will be asked for ticket ID
 * There is a request sent to mantis
