@@ -1,6 +1,7 @@
 # coding=utf-8
 import gtk
 
+
 from zim.actions import action
 from zim.gui import Dialog, MessageDialog
 from zim.gui.widgets import InputForm
@@ -117,7 +118,11 @@ class TicketDialog(Dialog):
 
     def do_response_ok(self):
         self.bt.setup_config(self.notebook.preferences)
-        ticket = self.form['ticket']
+
+        # get the ticket ID and prevent changes during http request
+        input = self.form.widgets.get('ticket')
+        input.set_editable(False)
+        ticket = input.get_text()
         self.do_close(self)
 
         # by empty string do nothing
