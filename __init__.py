@@ -1,4 +1,5 @@
 # coding=utf-8
+import gtk
 
 from zim.actions import action
 from zim.gui import Dialog, MessageDialog
@@ -25,6 +26,7 @@ try:
     import BeautifulSoup
 except ImportError:
     BeautifulSoup = None
+
 
 class SimpleMantisLinkPlugin(PluginClass):
     plugin_info = {
@@ -103,18 +105,35 @@ class TicketDialog(Dialog):
             ('ticket', 'string', _('ID')),  # T: Ticket ID
         ))
 
+        # Register global dielog key-press event, which is called for every input
+        self.add_events(gtk.gdk.KEY_PRESS_MASK)
+        self.connect('key-press-event', self.on_dialog_key_press)
+
+    def on_dialog_key_press(self, dialog, event):
+        # Close dialog on enter click
+        if event.keyval == gtk.keysyms.Return:
+            dialog.response(gtk.RESPONSE_OK)
+            return True
+
     def do_response_ok(self):
         self.bt.setup_config(self.notebook.preferences)
+        ticket = self.form['ticket']
+        self.do_close(self)
+
+        # by empty string do nothing
+        if not ticket:
+            return True
 
         try:
-            ticket_data = self.bt.get_ticket_data(self.form['ticket'])
+            # Do Request to web page an set the response data formatted at cursor position
+            ticket_data = self.bt.get_ticket_data(ticket)
             buffer = self.pageview.view.get_buffer()
             buffer.insert_link_at_cursor(ticket_data['ticket'], ticket_data['url'])
             buffer.insert_at_cursor(" " + ticket_data['title'] + "\n")
         except RequestError as e:
-            self.do_close(self)
             MessageDialog(self, e.message).run()
 
+        return True
 
 class BugTracker:
     def __init__(self):
@@ -135,6 +154,7 @@ class BugTracker:
 
     def get_ticket_data(self, ticket_id):
 
+        # all requests have a same http - Session
         if not self.session:
             self.session_start()
 
